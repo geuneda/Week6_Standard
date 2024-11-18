@@ -21,6 +21,10 @@ public enum UpgradeOption
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private Button pauseButton;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private GameObject pausePanel;
+    
     public static GameManager Instance;
     [SerializeField] private string playerTag;
     
@@ -83,6 +87,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(StartNextWave());
+        
+        if(pausePanel.activeInHierarchy)
+        { pausePanel.SetActive(false); }
     }
 
     private IEnumerator StartNextWave()
@@ -232,5 +239,17 @@ public class GameManager : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    public void PauseGame()
+    {
+        pausePanel.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void ResumeGame()
+    {
+        pausePanel.SetActive(false);
+        Time.timeScale = 1;
     }
 }
