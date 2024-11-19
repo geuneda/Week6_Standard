@@ -23,13 +23,15 @@ public class CharacterStatHandler : MonoBehaviour
     private void Awake()
     {
         UpdateCharacterStat();
+        Intialize();
+    }
+
+    private void Intialize()
+    {
+        if (!baseStat.attackSO) return;
         
-        if (baseStat.attackSO != null)
-        {
-            baseStat.attackSO = Instantiate(baseStat.attackSO);
-            CurrentStat.attackSO = Instantiate(baseStat.attackSO);
-        }
-        
+        baseStat.attackSO = Instantiate(baseStat.attackSO);
+        CurrentStat.attackSO = Instantiate(baseStat.attackSO);
     }
 
     private void UpdateCharacterStat()
@@ -54,17 +56,23 @@ public class CharacterStatHandler : MonoBehaviour
         UpdateCharacterStat();
     }
 
-    private void ApplyStatModifier(CharacterStat modifier)
+    private Func<float, float, float> GetOperation(StatsChangeType statChangeType)
     {
-        Func<float, float, float> operation = modifier.statsChangeType switch
+        return statChangeType switch
         {
             StatsChangeType.Add => (current, change) => current + change,
             StatsChangeType.Multiple => (current, change) => current * change,
             _ => (current, change) => change
         };
+    }
+    
+    private void ApplyStatModifier(CharacterStat modifier)
+    {
+        Func<float, float, float> operation = GetOperation(modifier.statsChangeType);
         
         UpdateBasicStats(operation, modifier);
         UpdateAttackStats(operation, modifier);
+        
         if (CurrentStat.attackSO is RangedAttackSO currentRanged && modifier.attackSO is RangedAttackSO newRanged)
         {
             UpdateRangedAttackStats(operation, currentRanged, newRanged);
