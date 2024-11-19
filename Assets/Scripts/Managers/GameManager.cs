@@ -151,6 +151,8 @@ public class GameManager : MonoBehaviour
         if (currentWaveIndex % 10 == 0)
         {
             IncreaseSpawnPositions();
+            // 10, 30, 50 에 부여되는 랜덤 디버프
+            ApplyRandomDamage();
         }
 
         if (currentWaveIndex % 5 == 0)
@@ -214,6 +216,14 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    private void ApplyRandomDamage()
+    {
+        float randomDamagePercent = Random.Range(0f, 0.5f);
+        int damageAmount = Mathf.RoundToInt(playerHealthSystem.MaxHealth * randomDamagePercent);
+        
+        playerHealthSystem.ChangeHealth(-damageAmount);
     }
 
     private void GameOver()
